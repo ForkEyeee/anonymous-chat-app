@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import UserContent from './UserContent';
 import MessageBox from './MessageBox';
+import ChatBox from './ChatBox';
 
 const HomePage = () => {
   const socket = io('http://localhost:3001/');
@@ -27,6 +28,7 @@ const HomePage = () => {
   return (
     <div>
       <UserContent />
+      <ChatBox />
       <MessageBox />
     </div>
   );

@@ -42,8 +42,8 @@ const UserContent = () => {
             </div>
           </div>
         </div>
-        <div className="flex gap-4">
-          <DropdownMenu>
+        {/* <div className="flex gap-4"> */}
+        {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
                 <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -56,13 +56,13 @@ const UserContent = () => {
               <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="flex pt-[10px] pb-[10px] pl-[16px] pr-[16px] items-center gap-[8px] rounded-[8px] bg-[#615ef01a]">
-            <FaPhoneAlt class="phone-icon" />
-            <p className="text-[#615EF0] font-Metropolis text-[16px] font-semibold leading-[125%]">
-              Call
-            </p>
-          </div>
+          </DropdownMenu> */}
+        <div className="flex pt-[10px] pb-[10px] pl-[16px] pr-[16px] items-center gap-[8px] rounded-[8px] bg-[#615ef01a]">
+          <FaPhoneAlt class="phone-icon" />
+          <p className="text-[#615EF0] font-Metropolis text-[16px] font-semibold leading-[125%]">
+            Call
+          </p>
+          {/* </div> */}
         </div>
       </div>
     </div>
