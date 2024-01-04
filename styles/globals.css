@@ -7,6 +7,35 @@
   src: url('../public/Metropolis-SemiBold.otf');
 }
 
+.call-button {
+  border-radius: 8px;
+  background: var(--primary-10, rgba(97, 94, 240, 0.1));
+}
+
+.phone-icon {
+  filter: brightness(0) saturate(100%) invert(43%) sepia(71%) saturate(5033%) hue-rotate(229deg)
+    brightness(98%) contrast(93%);
+}
+
+.attachments-icon {
+  color: var(--Black, #000);
+  font-family: Font Awesome 6 Pro;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+  opacity: 0.4;
+}
+
+.send-icon {
+  color: var(--Primary, #615ef0);
+  font-family: Font Awesome 6 Pro;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
