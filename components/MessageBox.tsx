@@ -7,9 +7,8 @@ import { useEffect, useState } from 'react';
 const socket = io('http://localhost:3001/');
 
 const MessageBox = () => {
-  // const [value, setValue] = useState('');
+  const [value, setValue] = useState('');
   const room = 'room1';
-  const value = 'hello';
   const handleSubmit = e => {
     e.preventDefault();
     socket.emit('send_message', { value, room });
@@ -25,8 +24,8 @@ const MessageBox = () => {
           </button>
           <Input
             className="border border-gray-400 rounded-lg p-4 w-full"
-            // onChange={e => setValue(e.target.value)}
-            // value={value}
+            onChange={e => setValue(e.target.value)}
+            value={value}
           />
         </div>
       </div>
