@@ -22,9 +22,20 @@ io.on('connection', socket => {
     // console.log(data.room);
     // socket.broadcast.emit('receive_message', data);
     // socket.broadcast.to(data.room).emit('receive_message', data);
-    // io.to('room1').emit('receive_message', data);
+    const test = {
+      id: socket.id,
+      value: data.value,
+      room: data.room,
+    };
+    // io.to('room1').emit('receive_message', test);
+    console.log(socket.rooms);
+    console.log(data);
+    // socket.to('room1').emit('receive_message', data);
+    // socket.emit('receive_message', data);
+    // io.to(data.room).emit('receive_message', data);
+    socket.broadcast.to(data.room).emit('receive_message', data);
 
-    socket.to(data.room).emit('receive_message', data);
+    // socket.to(data.room).emit('receive_message', data);
   });
 });
 

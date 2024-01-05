@@ -20,6 +20,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 const socket = io('http://localhost:3001/');
 
+socket.on('connect', () => {
+  console.log(socket.id);
+});
+
 const HomePage = () => {
   useEffect(() => {
     socket.emit('join_room', 'room1');
@@ -29,7 +33,7 @@ const HomePage = () => {
     <div>
       <UserContent />
       <ChatBox socket={socket} />
-      <MessageBox />
+      <MessageBox socket={socket} />
     </div>
   );
 };

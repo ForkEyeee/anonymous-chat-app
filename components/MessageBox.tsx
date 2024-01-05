@@ -4,12 +4,11 @@ import { IoIosSend } from 'react-icons/io';
 import { io, connect } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 
-const socket = io('http://localhost:3001/');
-
-const MessageBox = () => {
+const MessageBox = ({ socket }) => {
   const [value, setValue] = useState('');
   const room = 'room1';
   const handleSubmit = e => {
+    console.log(socket);
     e.preventDefault();
     socket.emit('send_message', { value, room });
   };
