@@ -22,8 +22,7 @@ const socket = io('http://localhost:3001/');
 
 const HomePage = () => {
   useEffect(() => {
-    const room = 'room1';
-    socket.emit('join_room', room);
+    socket.emit('join_room', 'room1');
   }, []);
 
   return (

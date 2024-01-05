@@ -19,9 +19,10 @@ io.on('connection', socket => {
   });
 
   socket.on('send_message', data => {
-    console.log(data.room);
-    socket.broadcast.emit('receive_message', data);
+    // console.log(data.room);
+    // socket.broadcast.emit('receive_message', data);
     // socket.broadcast.to(data.room).emit('receive_message', data);
+    // io.to('room1').emit('receive_message', data);
 
     socket.to(data.room).emit('receive_message', data);
   });
