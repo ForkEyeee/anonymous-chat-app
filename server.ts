@@ -15,27 +15,28 @@ io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
 
   socket.on('join_room', data => {
-    socket.join(data);
-  });
+    const roomSize =
+      io.sockets.adapter.rooms.get(data) === undefined
+        ? null
+        : io.sockets.adapter.rooms.get(data).size;
+    const roomNumber = parseInt(data.slice(4)) + 1;
+    const room = 'room' + roomNumber.toString();
+    if (roomSize <= 2 || roomSize === null) {
+      console.log('joining room1');
+      socket.join(data);
+    } else {
+      console.log('making a new room');
+      console.log('roomsize ' + roomSize);
 
+      socket.join(room);
+    }
+    console.log(socket.rooms);
+    console.log(io.sockets.adapter.rooms.get(data).size);
+  });
   socket.on('send_message', data => {
-    // console.log(data.room);
-    // socket.broadcast.emit('receive_message', data);
-    // socket.broadcast.to(data.room).emit('receive_message', data);
-    const test = {
-      id: socket.id,
-      value: data.value,
-      room: data.room,
-    };
-    // io.to('room1').emit('receive_message', test);
     console.log(socket.rooms);
     console.log(data);
-    // socket.to('room1').emit('receive_message', data);
-    // socket.emit('receive_message', data);
-    // io.to(data.room).emit('receive_message', data);
     socket.broadcast.to(data.room).emit('receive_message', data);
-
-    // socket.to(data.room).emit('receive_message', data);
   });
 });
 
