@@ -3,16 +3,14 @@ import { useEffect, useState, useRef } from 'react';
 import UserMessage from './UserMessage';
 import { io } from 'socket.io-client';
 
-const ChatBox = () => {
+const ChatBox = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState('');
-  const socket = useRef(io('http://localhost:3001/'));
-  console.log(socket.current.on);
 
   useEffect(() => {
-    socket.current.on('receive_message', data => {
+    socket.on('receive_message', data => {
       setMessageReceived(data.value);
     });
-  });
+  }, [socket]);
 
   return <UserMessage message={messageReceived} />;
 };

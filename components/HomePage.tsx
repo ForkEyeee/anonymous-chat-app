@@ -28,7 +28,7 @@ const HomePage = () => {
   return (
     <div>
       <UserContent />
-      <ChatBox />
+      <ChatBox socket={socket} />
       <MessageBox />
     </div>
   );
