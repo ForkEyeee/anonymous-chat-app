@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 
 const UserContent = () => {
-  const { setTheme } = useTheme();
-
   return (
     <div className="p-[24px] border-b-[1px] ">
       <div className="flex justify-between">
@@ -58,7 +56,7 @@ const UserContent = () => {
             </DropdownMenuContent>
           </DropdownMenu> */}
         <div className="flex pt-[10px] pb-[10px] pl-[16px] pr-[16px] items-center gap-[8px] rounded-[8px] bg-[#615ef01a]">
-          <FaPhoneAlt class="phone-icon" />
+          <FaPhoneAlt className="phone-icon" />
           <p className="text-[#615EF0] font-Metropolis text-[16px] font-semibold leading-[125%]">
             Call
           </p>

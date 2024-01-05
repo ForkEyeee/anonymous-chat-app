@@ -14,15 +14,23 @@ const io = new Server(httpServer, {
 });
 
 io.on('connection', socket => {
-  socket.emit('hello', 'A user connected: ' + socket.id);
-  socket.on('disconnect', reason => {
-    console.log('A user disconnected: ' + socket.id + ' ' + reason);
+  // console.log('A user connected:', socket.id);
+  socket.on('join', roomId => {
+    socket.join(roomId);
+    console.log(`user with id-${socket.id} joined room - ${roomId}`);
+    console.log(socket.rooms);
+    console.log(io.sockets.adapter.rooms.get(roomId));
   });
-});
 
-io.on('connection', socket => {
-  socket.on('test', msg => {
-    console.log('message: ' + msg);
+  socket.on('chat message', data => {
+    console.log(data, 'DATA');
+    //This will send a message to a specific room ID
+    // socket.to(data.room).emit('receive message', data.msg);
+    io.sockets.in('l2RzT7jKqFcbKbRnAAHb').emit('receive message', data.msg);
+  });
+
+  socket.on('disconnect', reason => {
+    // console.log('A user disconnected: ' + socket.id + ' ' + reason);
   });
 });
 

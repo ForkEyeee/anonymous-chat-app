@@ -14,22 +14,47 @@ import {
 import UserContent from './UserContent';
 import MessageBox from './MessageBox';
 import ChatBox from './ChatBox';
+import { getRandomValues } from 'crypto';
+import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const HomePage = () => {
   const socket = io('http://localhost:3001/');
-  const { setTheme } = useTheme();
-  useEffect(() => {
-    socket.on('hello', arg => {
-      console.log(arg); // world
-    });
+  const [number, setNumber] = useState(uuidv4());
+  const [messages, setMessages] = useState([]);
+  const roomNumber = uuidv4();
 
-    socket.emit('test', 'sup');
-  });
+  useEffect(() => {
+    console.log(socket);
+    socket.emit('join', 'l2RzT7jKqFcbKbRnAAHb');
+    // socket.on('chat-messages', data => {
+    //   setChatMessages(data.messages);
+    // });
+    // socket.on('new-chat-message', message => {
+    //   setChatMessages(messages => [...messages, message]); // updater function
+    // });
+  }, [socket, number]);
+
+  useEffect(() => {
+    socket.on('receive message', data => {
+      console.log(data);
+      alert(data);
+    });
+  }, [socket]);
+
+  // useEffect(() => {
+  //   socket.on('chat message', msg => {
+  //     console.log('herere');
+  //     setMessages(msg);
+  //   });
+  // });
+
   return (
     <div>
       <UserContent />
       <ChatBox />
-      <MessageBox />
+      <MessageBox roomNum={number} />
+      {messages}
     </div>
   );
 };
