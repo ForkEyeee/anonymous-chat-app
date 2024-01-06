@@ -7,6 +7,7 @@ const ChatBox = ({ socket }) => {
 
   useEffect(() => {
     socket.on('receive_message', data => {
+      console.log(socket.id);
       setMessageReceived([...messageReceived, data.value]);
     });
   }, [socket, messageReceived]);
