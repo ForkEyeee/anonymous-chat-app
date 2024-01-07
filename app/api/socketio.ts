@@ -19,7 +19,7 @@ function generateRandom(maxLimit) {
 
 function getRandomItem(rooms) {
   for (const room of rooms) {
-    if (room.size >= 2) {
+    if (room.size >= 3) {
       rooms.delete(room);
     }
   }
@@ -33,17 +33,19 @@ io.on('connection', socket => {
   socket.on('find_rooms', () => {
     let randomRoom;
     let id;
-    const roomSet = io.sockets.adapter.rooms;
-    const [rooms] = io.sockets.adapter.rooms;
+    const rooms = io.sockets.adapter.rooms;
     const getRoom = () => {
       for (const room of rooms) {
-        if (room.size === 1) {
-          randomRoom = getRandomItem(roomSet);
-          id = randomRoom;
-          break;
+        if (room[1].size === 2) {
+          console.log('joining exisitng room');
+          id = room;
         }
       }
-      if (id === undefined) id = uuidv4();
+      if (id === undefined) {
+        console.log('getting random room');
+        randomRoom = getRandomItem(rooms);
+        id = randomRoom;
+      }
       return id;
     };
 
@@ -52,29 +54,37 @@ io.on('connection', socket => {
     if (typeof roomId === 'object') {
       roomId = [...roomId][0];
     }
-    console.log(io.sockets.adapter.rooms);
+
     socket.join(roomId);
-    console.log(io.sockets.adapter.rooms);
+
+    const roomInfo = {
+      roomId,
+      userId: socket.id,
+      size: io.sockets.adapter.rooms.get(roomId).size - 1,
+    };
+
+    socket.emit('room_info', roomInfo);
   });
 
-  socket.on('join_room', data => {
-    if (io.sockets.adapter.rooms.has(data)) {
-      socket.join(data);
-    } else {
-      console.log(socket.id + 'tried to join ' + data + 'but the room does not exist.');
-      // Socket.join is not executed, hence the room not created.
-    }
-    // console.log(socket.rooms);
-    // console.log(data);
-    // socket.join(data);
-    // console.log(socket.rooms);
-    // const rooms = io.sockets.adapter.rooms.get(data);
-    // console.log(rooms);
-    // socket.emit('new_rooms', rooms);
-  });
+  // socket.on('join_room', data => {
+  //   if (io.sockets.adapter.rooms.has(data)) {
+  //     socket.join(data);
+  //   } else {
+  //     console.log(socket.id + 'tried to join ' + data + 'but the room does not exist.');
+  //     // Socket.join is not executed, hence the room not created.
+  //   }
+  //   // console.log(socket.rooms);
+  //   // console.log(data);
+  //   // socket.join(data);
+  //   // console.log(socket.rooms);
+  //   // const rooms = io.sockets.adapter.rooms.get(data);
+  //   // console.log(rooms);
+  //   // socket.emit('new_rooms', rooms);
+  // });
 
   socket.on('send_message', data => {
-    socket.broadcast.to(data.room).emit('receive_message', data);
+    console.log(data);
+    socket.broadcast.to(data.roomId).emit('receive_message', data.value);
   });
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
