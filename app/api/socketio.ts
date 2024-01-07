@@ -11,12 +11,6 @@ const io = new Server(httpServer, {
   },
 });
 
-function generateRandom(maxLimit) {
-  let rand = Math.random() * maxLimit;
-  rand = Math.floor(rand);
-  return rand;
-}
-
 function getRandomItem(rooms) {
   for (const room of rooms) {
     if (room.size >= 3) {
@@ -54,8 +48,9 @@ io.on('connection', socket => {
     if (typeof roomId === 'object') {
       roomId = [...roomId][0];
     }
-
+    console.log(io.sockets.adapter.rooms);
     socket.join(roomId);
+    console.log(io.sockets.adapter.rooms);
 
     const roomInfo = {
       roomId,
@@ -65,22 +60,6 @@ io.on('connection', socket => {
 
     socket.emit('room_info', roomInfo);
   });
-
-  // socket.on('join_room', data => {
-  //   if (io.sockets.adapter.rooms.has(data)) {
-  //     socket.join(data);
-  //   } else {
-  //     console.log(socket.id + 'tried to join ' + data + 'but the room does not exist.');
-  //     // Socket.join is not executed, hence the room not created.
-  //   }
-  //   // console.log(socket.rooms);
-  //   // console.log(data);
-  //   // socket.join(data);
-  //   // console.log(socket.rooms);
-  //   // const rooms = io.sockets.adapter.rooms.get(data);
-  //   // console.log(rooms);
-  //   // socket.emit('new_rooms', rooms);
-  // });
 
   socket.on('send_message', data => {
     console.log(data);

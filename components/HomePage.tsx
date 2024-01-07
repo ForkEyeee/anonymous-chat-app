@@ -13,14 +13,17 @@ socket.on('connect', () => {
 
 const HomePage = () => {
   const [room, setRoom] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     socket.emit('find_rooms');
     socket.on('room_info', roomInfo => {
       setRoom(roomInfo);
     });
+    setIsLoading(false);
   }, []);
-  console.log(room);
+
+  if (isLoading) return <p>finding room....</p>;
 
   return (
     <div>
