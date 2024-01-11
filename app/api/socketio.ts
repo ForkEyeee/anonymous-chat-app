@@ -10,9 +10,9 @@ const io = new Server(httpServer, {
   },
 });
 
-function findAvailableRoom(rooms) {
+function findAvailableRoom(rooms, socket) {
   for (const [roomID, participants] of rooms) {
-    if (participants.size === 1) {
+    if (participants.size === 1 && !participants.has(socket.id)) {
       return roomID;
     }
   }
@@ -23,28 +23,37 @@ io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
 
   socket.on('find_room', () => {
-    const rooms = io.sockets.adapter.rooms;
-    let roomID = findAvailableRoom(rooms);
-
-    if (!roomID) {
-      roomID = socket.id;
-      console.log('Creating a new room:', roomID);
-    } else {
-      console.log('Joining an existing room:', roomID);
-    }
-    socket.leaveAll();
-    socket.join(roomID);
-    const roomSize = io.sockets.adapter.rooms.get(roomID).size;
-
-    const roomInfo = {
-      roomID,
-      userID: socket.id,
-      size: roomSize,
-    };
     console.log(io.sockets.adapter.rooms);
-    socket.emit('room_info', roomInfo);
-    if (roomSize > 1) {
-      io.to(roomID).emit('user_joined', socket.id);
+
+    const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
+
+    if (!alreadyInRoom) {
+      const rooms = io.sockets.adapter.rooms;
+      let roomID = findAvailableRoom(rooms, socket);
+
+      if (!roomID) {
+        roomID = socket.id;
+        console.log('Creating a new room:', roomID);
+      } else {
+        console.log('Joining an existing room:', roomID);
+        socket.leave(socket.id);
+      }
+
+      socket.join(roomID);
+      const roomSize = io.sockets.adapter.rooms.get(roomID).size;
+      const participants = Array.from(io.sockets.adapter.rooms.get(roomID).keys());
+      const otherParticipant = participants.find(participant => participant !== socket.id);
+
+      const roomInfo = {
+        roomID,
+        userID: otherParticipant,
+        size: roomSize,
+      };
+      console.log(io.sockets.adapter.rooms);
+      socket.emit('room_info', roomInfo);
+      if (roomSize > 1) {
+        io.to(roomID).emit('user_joined', socket.id);
+      }
     }
   });
 
@@ -57,7 +66,7 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
-    // socket.leaveAll();
+    console.log(io.sockets.adapter.rooms);
     socket.broadcast.emit('user_left', socket.id);
   });
 });

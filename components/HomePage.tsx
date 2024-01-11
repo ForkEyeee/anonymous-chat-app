@@ -14,29 +14,47 @@ socket.on('connect', () => {
 const HomePage = () => {
   const [room, setRoom] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
-    socket.emit('find_room');
+    const interval = setInterval(() => {
+      socket.emit('find_room');
+    }, 1000);
+
     socket.on('room_info', roomInfo => {
-      // setRoom(roomInfo);
+      setRoom(roomInfo);
+      if (roomInfo.size >= 2) setIsLoading(false);
     });
-    setIsLoading(false);
+
+    socket.on('disconnect', info => {
+      setIsLoading(true);
+    });
+
     return () => {
+      clearInterval(interval);
       socket.off('room_info');
+      socket.off('disconnect');
     };
   }, []);
 
-  if (isLoading) return <p>finding room....</p>;
+  if (isLoading)
+    return (
+      <div>
+        <p>finding room....</p> <h1>You: {socket.id}</h1>
+      </div>
+    );
 
   return (
-    <div>
-      <UserContent />
-      <ChatBox socket={socket} />
-      <div>Room: {room.roomId}</div>
-      <h1>Current User: {room.userId}</h1>
-      <h1>Online: {room.size}</h1>
-      <MessageBox socket={socket} room={room} />
-    </div>
+    <>
+      {room && (
+        <div>
+          <UserContent />
+          <ChatBox socket={socket} />
+          <div>Room: {room.roomID}</div>
+          <h1>OtherPartiicpant: {room.userID}</h1>
+          <h1>Online: {room.size}</h1>
+          <MessageBox socket={socket} room={room} />
+        </div>
+      )}
+    </>
   );
 };
 
