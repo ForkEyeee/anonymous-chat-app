@@ -16,11 +16,14 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    socket.emit('find_rooms');
+    socket.emit('find_room');
     socket.on('room_info', roomInfo => {
-      setRoom(roomInfo);
+      // setRoom(roomInfo);
     });
     setIsLoading(false);
+    return () => {
+      socket.off('room_info');
+    };
   }, []);
 
   if (isLoading) return <p>finding room....</p>;

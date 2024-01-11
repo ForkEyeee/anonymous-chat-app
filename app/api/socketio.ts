@@ -1,7 +1,6 @@
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
-const { v4: uuidv4 } = require('uuid');
 
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
@@ -11,62 +10,55 @@ const io = new Server(httpServer, {
   },
 });
 
-function getRandomItem(rooms) {
-  for (const room of rooms) {
-    if (room.size >= 3) {
-      rooms.delete(room);
+function findAvailableRoom(rooms) {
+  for (const [roomID, participants] of rooms) {
+    if (participants.size === 1) {
+      return roomID;
     }
   }
-  let items = Array.from(rooms);
-  return items[Math.floor(Math.random() * items.length)];
+  return null;
 }
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
 
-  socket.on('find_rooms', () => {
-    let randomRoom;
-    let id;
+  socket.on('find_room', () => {
     const rooms = io.sockets.adapter.rooms;
-    const getRoom = () => {
-      for (const room of rooms) {
-        if (room[1].size === 2) {
-          console.log('joining exisitng room');
-          id = room;
-        }
-      }
-      if (id === undefined) {
-        console.log('getting random room');
-        randomRoom = getRandomItem(rooms);
-        id = randomRoom;
-      }
-      return id;
-    };
+    let roomID = findAvailableRoom(rooms);
 
-    let roomId = getRoom();
-
-    if (typeof roomId === 'object') {
-      roomId = [...roomId][0];
+    if (!roomID) {
+      roomID = socket.id;
+      console.log('Creating a new room:', roomID);
+    } else {
+      console.log('Joining an existing room:', roomID);
     }
-    console.log(io.sockets.adapter.rooms);
-    socket.join(roomId);
-    console.log(io.sockets.adapter.rooms);
+    socket.leaveAll();
+    socket.join(roomID);
+    const roomSize = io.sockets.adapter.rooms.get(roomID).size;
 
     const roomInfo = {
-      roomId,
-      userId: socket.id,
-      size: io.sockets.adapter.rooms.get(roomId).size - 1,
+      roomID,
+      userID: socket.id,
+      size: roomSize,
     };
-
+    console.log(io.sockets.adapter.rooms);
     socket.emit('room_info', roomInfo);
+    if (roomSize > 1) {
+      io.to(roomID).emit('user_joined', socket.id);
+    }
   });
 
   socket.on('send_message', data => {
-    console.log(data);
-    socket.broadcast.to(data.roomId).emit('receive_message', data.value);
+    console.log(`Message from ${socket.id}:`, data);
+    const room = Array.from(socket.rooms)[0];
+    console.log(room);
+    socket.broadcast.to(room).emit('receive_message', data);
   });
+
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
+    // socket.leaveAll();
+    socket.broadcast.emit('user_left', socket.id);
   });
 });
 

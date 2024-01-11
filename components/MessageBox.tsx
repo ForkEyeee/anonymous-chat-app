@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 
 const MessageBox = ({ socket, room }) => {
   const [value, setValue] = useState('');
-  const roomId = room.roomId;
 
   const handleSubmit = e => {
     e.preventDefault();
-    socket.emit('send_message', { value, roomId });
+    socket.emit('send_message', value);
+    socket.off('send_message');
   };
 
   return (

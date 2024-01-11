@@ -8,14 +8,18 @@ const ChatBox = ({ socket }) => {
   useEffect(() => {
     socket.on('receive_message', data => {
       console.log(data);
-      setMessageReceived([...messageReceived, data]);
+      setMessageReceived(prevMessages => [...prevMessages, data]);
     });
-  }, [socket, messageReceived]);
+
+    return () => socket.off('receive_message');
+  }, [socket]);
 
   return (
     <>
       {messageReceived.length > 0 &&
-        messageReceived.map((message, index) => <UserMessage key={index} message={message} />)}
+        messageReceived.map((message, index) => (
+          <UserMessage key={index} message={message.value} />
+        ))}
     </>
   );
 };
