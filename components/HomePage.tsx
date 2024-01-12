@@ -17,7 +17,7 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       socket.emit('find_room');
-    }, 1000);
+    }, 5000);
 
     socket.on('room_info', roomInfo => {
       setRoom(roomInfo);

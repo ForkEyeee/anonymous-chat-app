@@ -20,23 +20,37 @@ function findAvailableRoom(rooms, socket) {
   return null;
 }
 
-async function cacheUserId(id) {
-  let userId = await redisClient.get(id);
-  if (userId === null) {
-    console.log('storing userId ' + userId);
-    userId = await redisClient.set(id, id);
+async function cacheUserDetails(id) {
+  let userDetails = await redisClient.get(id);
+
+  if (userDetails === null) {
+    userDetails = { userId: id, lastRoomId: '', otherChatterId: '' };
+    await redisClient.set(id, JSON.stringify(userDetails));
   } else {
-    console.log('found userId ' + userId);
+    userDetails = JSON.parse(userDetails);
   }
-  return userId;
+
+  return userDetails;
 }
 
-io.on('connection', socket => {
+io.on('connection', async socket => {
   console.log(`User Connected: ${socket.id}`);
-  cacheUserId(socket.id);
-  // console.log(redisClient);
-  socket.on('find_room', () => {
-    // console.log(io.sockets.adapter.rooms);
+  const userDetails = await cacheUserDetails(socket.id);
+  const rooms = io.sockets.adapter.rooms;
+
+  if (userDetails.lastRoomId && userDetails.otherChatterId) {
+    const roomExists = rooms.has(userDetails.lastRoomId);
+    const otherChatterPresent =
+      roomExists && rooms.get(userDetails.lastRoomId).has(userDetails.otherChatterId);
+    const roomSize = roomExists ? io.sockets.adapter.rooms.get(userDetails.lastRoomId).size : 0;
+
+    if (roomExists && otherChatterPresent && roomSize === 1) {
+      socket.join(userDetails.lastRoomId);
+    }
+  }
+
+  socket.on('find_room', async () => {
+    let userDetails = await redisClient.get(socket.id);
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
 
     if (!alreadyInRoom) {
@@ -45,40 +59,44 @@ io.on('connection', socket => {
 
       if (!roomID) {
         roomID = socket.id;
+        socket.join(roomID);
         console.log('Creating a new room:', roomID);
       } else {
-        console.log('Joining an existing room:', roomID);
         socket.leave(socket.id);
+        socket.join(roomID);
+        console.log('Joining an existing room:', roomID);
       }
-
-      socket.join(roomID);
-      const roomSize = io.sockets.adapter.rooms.get(roomID).size;
-      const participants = Array.from(io.sockets.adapter.rooms.get(roomID).keys());
+      const currentRoom = socket.rooms.values().next().value;
+      const participants = Array.from(io.sockets.adapter.rooms.get(currentRoom).keys());
       const otherParticipant = participants.find(participant => participant !== socket.id);
 
-      const roomInfo = {
-        roomID,
-        userID: otherParticipant,
-        size: roomSize,
+      userDetails = {
+        userId: userDetails.userId,
+        lastRoomId: roomID,
+        otherChatterId: otherParticipant,
       };
-      // console.log(io.sockets.adapter.rooms);
-      socket.emit('room_info', roomInfo);
+
+      await redisClient.set(socket.id, JSON.stringify(userDetails));
+
+      const roomSize = io.sockets.adapter.rooms.get(roomID).size;
+      socket.emit('room_info', { roomID, roomSize });
       if (roomSize > 1) {
         io.to(roomID).emit('user_joined', socket.id);
       }
     }
+    console.log(io.sockets.adapter.rooms);
   });
 
   socket.on('send_message', data => {
     console.log(`Message from ${socket.id}:`, data);
     const room = Array.from(socket.rooms)[0];
-    // console.log(room);
     socket.broadcast.to(room).emit('receive_message', data);
   });
 
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
-    // console.log(io.sockets.adapter.rooms);
+
+    console.log(io.sockets.adapter.rooms);
     socket.broadcast.emit('user_left', socket.id);
   });
 });
