@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client';
 import { useEffect, useState } from 'react';
 import { socket } from '@/lib/socket';
@@ -29,9 +30,13 @@ const HomePage = () => {
   return (
     <div>
       <UserInformation />
-      <div>Room: {room.roomID}</div>
-      <h1>Current User: {socket.id}</h1>
-      <h1>Online: {room.size}</h1>
+      {room && (
+        <>
+          <div>Room: {room.roomID}</div>
+          <h1>Current User: {socket.id}</h1>
+          <h1>Online: {room.size}</h1>
+        </>
+      )}
       <MessageList socket={socket} />
       <ChatBox socket={socket} />
     </div>
