@@ -1,33 +1,36 @@
-'use client';
-import { useEffect, useState, useRef } from 'react';
-import UserMessage from './ReceivedMessage';
-import SentMessage from './SentMessage';
+import { FaPaperclip } from 'react-icons/fa6';
+import { Input } from '@/components/ui/input';
+import { IoIosSend } from 'react-icons/io';
+import { useEffect, useState } from 'react';
 
 const ChatBox = ({ socket }) => {
-  const [messageReceived, setMessageReceived] = useState([]);
+  const [value, setValue] = useState('');
 
-  useEffect(() => {
-    socket.on('receive_message', message => {
-      console.log(`Message received:`, message);
-      setMessageReceived(prevMessages => [...prevMessages, message]);
-    });
-
-    return () => socket.off('receive_message');
-  }, [socket]);
-
-  console.log(messageReceived);
+  const handleSubmit = e => {
+    e.preventDefault();
+    const data = {
+      sender: socket.id,
+      message: value,
+    };
+    socket.emit('send_message', data);
+  };
 
   return (
-    <>
-      {messageReceived.length > 0 &&
-        messageReceived.map((message, index) =>
-          message.sender === socket.id ? (
-            <SentMessage key={index} message={message.message} />
-          ) : (
-            <UserMessage key={index} message={message.message} />
-          )
-        )}
-    </>
+    <form onSubmit={handleSubmit}>
+      <div className="flex p-[24px] items-center gap-[24px] self-stretch fixed bottom-0 w-[100%]">
+        <FaPaperclip className="attachments-icon" />
+        <div className="flex justify-end items-center relative w-[100%]">
+          <button type="submit" className="absolute mr-2 w-10 send-icon">
+            <IoIosSend />
+          </button>
+          <Input
+            className="border border-gray-400 rounded-lg p-4 w-full"
+            onChange={e => setValue(e.target.value)}
+            value={value}
+          />
+        </div>
+      </div>
+    </form>
   );
 };
 

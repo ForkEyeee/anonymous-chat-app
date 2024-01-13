@@ -36,12 +36,12 @@
   line-height: normal;
 }
 
-.user-message {
+.received-message {
   border-radius: 12px;
   background: var(--Primary, #615ef0);
 }
 
-.user-message-text {
+.received-message-text {
   color: var(--White, #fff);
   font-size: 14px;
   font-style: normal;

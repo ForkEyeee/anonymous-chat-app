@@ -10,7 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 
-const UserContent = () => {
+const UserInformation = () => {
   return (
     <div className="p-[24px] border-b-[1px] ">
       <div className="flex justify-between">
@@ -67,4 +67,4 @@ const UserContent = () => {
   );
 };
 
-export default UserContent;
+export default UserInformation;

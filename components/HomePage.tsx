@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import { socket } from '@/lib/socket';
 
-import UserContent from './UserContent';
-import MessageBox from './MessageBox';
 import ChatBox from './ChatBox';
+import MessageList from './MessageList';
+import UserInformation from './UserInformation';
 
 socket.on('connect', () => {
   console.log(socket.id);
@@ -24,12 +24,12 @@ const HomePage = () => {
 
   return (
     <div>
-      <UserContent />
-      <ChatBox socket={socket} />
+      <UserInformation />
       <div>Room: {room.roomID}</div>
       <h1>Current User: {socket.id}</h1>
       <h1>Online: {room.size}</h1>
-      <MessageBox socket={socket} />
+      <MessageList socket={socket} />
+      <ChatBox socket={socket} />
     </div>
   );
 };
