@@ -4,6 +4,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
 // const redisClient = require('../../lib/db.ts');
+require('dotenv').config();
 
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
@@ -12,7 +13,7 @@ const io = new Server(httpServer, {
     methods: ['GET', 'POST'],
   },
 });
-
+console.log(process.env.FRONTEND_URL);
 function generateRandom(maxLimit) {
   let rand = Math.random() * maxLimit;
   rand = Math.floor(rand);
