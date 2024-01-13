@@ -19,14 +19,16 @@ const MessageList = ({ socket }) => {
 
   return (
     <>
-      {messageReceived.length > 0 &&
-        messageReceived.map((message, index) =>
-          message.sender === socket.id ? (
-            <SentMessage key={index} message={message.message} />
-          ) : (
-            <UserMessage key={index} message={message.message} />
-          )
-        )}
+      <div className="flex flex-col ">
+        {messageReceived.length > 0 &&
+          messageReceived.map((message, index) =>
+            message.sender === socket.id ? (
+              <SentMessage key={index} message={message.message} />
+            ) : (
+              <UserMessage key={index} message={message.message} />
+            )
+          )}
+      </div>
     </>
   );
 };

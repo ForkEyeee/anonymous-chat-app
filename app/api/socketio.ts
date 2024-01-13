@@ -85,7 +85,7 @@ io.on('connection', socket => {
   socket.on('send_message', messageData => {
     const room = socket.rooms.values().next().value;
     console.log(room);
-    socket.broadcast.to(room).emit('receive_message', messageData);
+    io.to(room).emit('receive_message', messageData);
   });
 
   socket.on('disconnect', () => {
