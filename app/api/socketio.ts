@@ -3,7 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const redisClient = require('../../lib/db.ts');
+// const redisClient = require('../../lib/db.ts');
 
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
@@ -38,16 +38,16 @@ function findAvailableRoom(rooms, socket) {
   return null;
 }
 
-async function cacheUserId(id) {
-  let userId = await redisClient.get(id);
-  if (userId === null) {
-    console.log('storing userId ' + userId);
-    userId = await redisClient.set(id, id);
-  } else {
-    console.log('found userId ' + userId);
-  }
-  return userId;
-}
+// async function cacheUserId(id) {
+//   let userId = await redisClient.get(id);
+//   if (userId === null) {
+//     console.log('storing userId ' + userId);
+//     userId = await redisClient.set(id, id);
+//   } else {
+//     console.log('found userId ' + userId);
+//   }
+//   return userId;
+// }
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
