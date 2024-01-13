@@ -50,6 +50,7 @@ async function cacheUserId(id) {
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
+
   socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
 
@@ -85,11 +86,12 @@ io.on('connection', socket => {
   socket.on('send_message', messageData => {
     const room = socket.rooms.values().next().value;
     console.log(room);
-    socket.to(room).emit('receive_message', messageData);
+    io.to(room).emit('receive_message', messageData);
   });
 
   socket.on('disconnect', () => {
     console.log('A user disconnected:', socket.id);
+    console.log(io.sockets.adapter.rooms);
   });
 });
 
