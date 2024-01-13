@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client';
+require('dotenv').config();
 
-const url = 'http://localhost:3001';
+const url = process.env.SOCKET_SERVER;
+console.log(url);
 console.log(`initialize socket`);
 export const socket = io(url);
