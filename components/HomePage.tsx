@@ -18,6 +18,10 @@ const HomePage = () => {
     socket.on('room_info', roomInfo => {
       setRoom(roomInfo);
     });
+    return () => {
+      socket.off('find_room');
+      socket.off('room_info');
+    };
   }, []);
 
   console.log(room);
