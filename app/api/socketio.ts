@@ -82,14 +82,13 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('send_message', message => {
+  socket.on('send_message', messageData => {
     const room = socket.rooms.values().next().value;
     console.log(room);
-    socket.broadcast.to(room).emit('receive_message', message);
+    socket.broadcast.to(room).emit('receive_message', messageData);
   });
 
   socket.on('disconnect', () => {
-    socket.leave(socket.id);
     console.log('A user disconnected:', socket.id);
   });
 });

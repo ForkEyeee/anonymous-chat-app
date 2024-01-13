@@ -8,7 +8,11 @@ const MessageBox = ({ socket }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    socket.emit('send_message', value);
+    const data = {
+      sender: socket.id,
+      message: value,
+    };
+    socket.emit('send_message', data);
   };
 
   return (

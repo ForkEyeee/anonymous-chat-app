@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import UserMessage from './UserMessage';
+import UserMessage from './ReceivedMessage';
+import SentMessage from './SentMessage';
 
 const ChatBox = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState([]);
@@ -19,7 +20,13 @@ const ChatBox = ({ socket }) => {
   return (
     <>
       {messageReceived.length > 0 &&
-        messageReceived.map((message, index) => <UserMessage key={index} message={message} />)}
+        messageReceived.map((message, index) =>
+          message.sender === socket.id ? (
+            <SentMessage key={index} message={message.message} />
+          ) : (
+            <UserMessage key={index} message={message.message} />
+          )
+        )}
     </>
   );
 };
