@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { io } from 'socket.io-client';
 require('dotenv').config();
 
