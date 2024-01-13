@@ -44,6 +44,7 @@
 .received-message-text {
   color: var(--White, #fff);
   font-size: 14px;
+  font-family: Metropolis-SemiBold;
   font-style: normal;
   font-weight: 400;
   line-height: 150%;
@@ -51,7 +52,7 @@
 
 .sent-message-text {
   color: #000;
-  font-family: Metropolis;
+  font-family: Metropolis-SemiBold;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
