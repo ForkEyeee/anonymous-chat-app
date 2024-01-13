@@ -6,20 +6,20 @@ const ChatBox = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState([]);
 
   useEffect(() => {
-    socket.on('receive_message', data => {
-      console.log(data);
-      setMessageReceived(prevMessages => [...prevMessages, data]);
+    socket.on('receive_message', message => {
+      console.log(`Message received:`, message);
+      setMessageReceived(prevMessages => [...prevMessages, message]);
     });
 
     return () => socket.off('receive_message');
   }, [socket]);
 
+  console.log(messageReceived);
+
   return (
     <>
       {messageReceived.length > 0 &&
-        messageReceived.map((message, index) => (
-          <UserMessage key={index} message={message.value} />
-        ))}
+        messageReceived.map((message, index) => <UserMessage key={index} message={message} />)}
     </>
   );
 };

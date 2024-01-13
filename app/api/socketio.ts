@@ -1,6 +1,7 @@
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const { v4: uuidv4 } = require('uuid');
 const redisClient = require('../../lib/db.ts');
 
 const httpServer = http.createServer();
@@ -11,6 +12,22 @@ const io = new Server(httpServer, {
   },
 });
 
+function generateRandom(maxLimit) {
+  let rand = Math.random() * maxLimit;
+  rand = Math.floor(rand);
+  return rand;
+}
+
+function getRandomItem(rooms) {
+  for (const room of rooms) {
+    if (room.size >= 3) {
+      rooms.delete(room);
+    }
+  }
+  let items = Array.from(rooms);
+  return items[Math.floor(Math.random() * items.length)];
+}
+
 function findAvailableRoom(rooms, socket) {
   for (const [roomID, participants] of rooms) {
     if (participants.size === 1 && !participants.has(socket.id)) {
@@ -20,37 +37,20 @@ function findAvailableRoom(rooms, socket) {
   return null;
 }
 
-async function cacheUserDetails(id) {
-  let userDetails = await redisClient.get(id);
-
-  if (userDetails === null) {
-    userDetails = { userId: id, lastRoomId: '', otherChatterId: '' };
-    await redisClient.set(id, JSON.stringify(userDetails));
+async function cacheUserId(id) {
+  let userId = await redisClient.get(id);
+  if (userId === null) {
+    console.log('storing userId ' + userId);
+    userId = await redisClient.set(id, id);
   } else {
-    userDetails = JSON.parse(userDetails);
+    console.log('found userId ' + userId);
   }
-
-  return userDetails;
+  return userId;
 }
 
-io.on('connection', async socket => {
+io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
-  const userDetails = await cacheUserDetails(socket.id);
-  const rooms = io.sockets.adapter.rooms;
-
-  if (userDetails.lastRoomId && userDetails.otherChatterId) {
-    const roomExists = rooms.has(userDetails.lastRoomId);
-    const otherChatterPresent =
-      roomExists && rooms.get(userDetails.lastRoomId).has(userDetails.otherChatterId);
-    const roomSize = roomExists ? io.sockets.adapter.rooms.get(userDetails.lastRoomId).size : 0;
-
-    if (roomExists && otherChatterPresent && roomSize === 1) {
-      socket.join(userDetails.lastRoomId);
-    }
-  }
-
-  socket.on('find_room', async () => {
-    let userDetails = await redisClient.get(socket.id);
+  socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
 
     if (!alreadyInRoom) {
@@ -59,45 +59,38 @@ io.on('connection', async socket => {
 
       if (!roomID) {
         roomID = socket.id;
-        socket.join(roomID);
         console.log('Creating a new room:', roomID);
       } else {
-        socket.leave(socket.id);
-        socket.join(roomID);
         console.log('Joining an existing room:', roomID);
       }
-      const currentRoom = socket.rooms.values().next().value;
-      const participants = Array.from(io.sockets.adapter.rooms.get(currentRoom).keys());
+      socket.leave(socket.id);
+      socket.join(roomID);
+      const roomSize = io.sockets.adapter.rooms.get(roomID).size;
+      const participants = Array.from(io.sockets.adapter.rooms.get(roomID).keys());
       const otherParticipant = participants.find(participant => participant !== socket.id);
 
-      userDetails = {
-        userId: userDetails.userId,
-        lastRoomId: roomID,
-        otherChatterId: otherParticipant,
+      const roomInfo = {
+        roomID,
+        userID: otherParticipant,
+        size: roomSize,
       };
-
-      await redisClient.set(socket.id, JSON.stringify(userDetails));
-
-      const roomSize = io.sockets.adapter.rooms.get(roomID).size;
-      socket.emit('room_info', { roomID, roomSize });
+      console.log(io.sockets.adapter.rooms);
+      socket.emit('room_info', roomInfo);
       if (roomSize > 1) {
         io.to(roomID).emit('user_joined', socket.id);
       }
     }
-    console.log(io.sockets.adapter.rooms);
   });
 
-  socket.on('send_message', data => {
-    console.log(`Message from ${socket.id}:`, data);
-    const room = Array.from(socket.rooms)[0];
-    socket.broadcast.to(room).emit('receive_message', data);
+  socket.on('send_message', message => {
+    const room = socket.rooms.values().next().value;
+    console.log(room);
+    socket.broadcast.to(room).emit('receive_message', message);
   });
 
   socket.on('disconnect', () => {
+    socket.leave(socket.id);
     console.log('A user disconnected:', socket.id);
-
-    console.log(io.sockets.adapter.rooms);
-    socket.broadcast.emit('user_left', socket.id);
   });
 });
 

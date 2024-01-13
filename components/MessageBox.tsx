@@ -3,13 +3,12 @@ import { Input } from '@/components/ui/input';
 import { IoIosSend } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 
-const MessageBox = ({ socket, room }) => {
+const MessageBox = ({ socket }) => {
   const [value, setValue] = useState('');
 
   const handleSubmit = e => {
     e.preventDefault();
     socket.emit('send_message', value);
-    socket.off('send_message');
   };
 
   return (
