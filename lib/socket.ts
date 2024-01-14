@@ -5,4 +5,4 @@ require('dotenv').config();
 const url = process.env.SOCKET_SERVER;
 console.log(url);
 console.log(`initialize socket`);
-export const socket = io(url);
+export const socket = io('http://localhost:3001');
