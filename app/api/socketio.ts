@@ -9,7 +9,7 @@ require('dotenv').config();
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   },
 });

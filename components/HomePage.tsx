@@ -30,13 +30,11 @@ const HomePage = () => {
   return (
     <div>
       <UserInformation />
-      {room && (
-        <>
-          <div>Room: {room.roomID}</div>
-          <h1>Current User: {socket.id}</h1>
-          <h1>Online: {room.size}</h1>
-        </>
-      )}
+
+      <div>Room: {room.roomID}</div>
+      <h1>Current User: {socket.id}</h1>
+      <h1>Online: {room.size}</h1>
+
       <MessageList socket={socket} />
       <ChatBox socket={socket} />
     </div>
