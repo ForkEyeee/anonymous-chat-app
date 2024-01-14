@@ -1,7 +1,6 @@
-// @ts-nocheck
 'use client';
-import { useEffect, useState } from 'react';
-import { socket } from '@/lib/socket';
+import React, { useEffect, useState } from 'react';
+import { getSocket } from '@/lib/socket';
 
 import ChatBox from './ChatBox';
 import MessageList from './MessageList';
@@ -10,26 +9,30 @@ import UserInformation from './UserInformation';
 const HomePage = () => {
   const [room, setRoom] = useState({});
   const [socketId, setSocketId] = useState('');
-
-  socket.on('connect', () => {
-    console.log(socket.id);
-    setSocketId(socket.id);
-  });
+  const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    socket.emit('find_room');
-    socket.on('room_info', roomInfo => {
+    const socketInstance = getSocket();
+    setSocket(socketInstance);
+
+    socketInstance.on('connect', () => {
+      console.log(socketInstance.id);
+      setSocketId(socketInstance.id);
+    });
+
+    socketInstance.on('room_info', roomInfo => {
       setRoom(roomInfo);
     });
 
     return () => {
-      socket.off('connect');
-      socket.off('find_room');
-      socket.off('room_info');
+      socketInstance.off('connect');
+      socketInstance.off('room_info');
     };
   }, []);
 
-  console.log(room);
+  const handleButtonClick = () => {
+    socket.emit('find_room');
+  };
 
   return (
     <div>
@@ -37,8 +40,9 @@ const HomePage = () => {
       <div>Room: {room.roomID}</div>
       <h1>Current User: {socketId}</h1>
       <h1>Online: {room.size}</h1>
-      <MessageList socket={socket} />
-      <ChatBox socket={socket} />
+      <button onClick={handleButtonClick}>Connect to Room</button>
+      {socket && <MessageList socket={socket} />}
+      {socket && <ChatBox socket={socket} />}
     </div>
   );
 };

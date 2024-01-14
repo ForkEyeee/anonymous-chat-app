@@ -40,16 +40,16 @@ function findAvailableRoom(rooms, socket) {
   return null;
 }
 
-// async function cacheUserId(id) {
-//   let userId = await redisClient.get(id);
-//   if (userId === null) {
-//     console.log('storing userId ' + userId);
-//     userId = await redisClient.set(id, id);
-//   } else {
-//     console.log('found userId ' + userId);
-//   }
-//   return userId;
-// }
+async function cacheUserId(id) {
+  let userId = await redisClient.get(id);
+  if (userId === null) {
+    console.log('storing userId ' + userId);
+    userId = await redisClient.set(id, id);
+  } else {
+    console.log('found userId ' + userId);
+  }
+  return userId;
+}
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
