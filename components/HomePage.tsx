@@ -11,21 +11,19 @@ const HomePage = () => {
   const [room, setRoom] = useState({});
   const [socketId, setSocketId] = useState('');
 
+  socket.on('connect', () => {
+    console.log(socket.id);
+    setSocketId(socket.id);
+  });
+
   useEffect(() => {
-    const handleConnect = () => {
-      console.log(socket.id);
-      setSocketId(socket.id);
-    };
-
-    socket.on('connect', handleConnect);
-
     socket.emit('find_room');
     socket.on('room_info', roomInfo => {
       setRoom(roomInfo);
     });
 
     return () => {
-      socket.off('connect', handleConnect);
+      socket.off('connect');
       socket.off('find_room');
       socket.off('room_info');
     };
