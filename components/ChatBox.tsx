@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 
 const ChatBox = ({ socket }) => {
   const [value, setValue] = useState('');
-
   const handleSubmit = e => {
     e.preventDefault();
     const data = {
