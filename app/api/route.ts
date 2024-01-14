@@ -1,3 +1,3 @@
 export async function GET() {
-  return Response.json('socket');
+  return Response.json('s');
 }
