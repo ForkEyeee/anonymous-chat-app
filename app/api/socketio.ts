@@ -93,7 +93,9 @@ io.on('connection', socket => {
   });
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected:', socket.id);
+    const disconnectMessage = 'A user disconnected: ' + socket.id;
+    console.log(disconnectMessage);
+    io.to(socket.id).emit('room_disconnect', disconnectMessage);
     console.log(io.sockets.adapter.rooms);
   });
 });

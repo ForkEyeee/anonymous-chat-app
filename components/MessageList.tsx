@@ -1,11 +1,11 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
-import UserMessage from './ReceivedMessage';
+import ReceivedMessage from './ReceivedMessage';
 import SentMessage from './SentMessage';
 
 const MessageList = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState([]);
-
+  const [messenger, setMessenger] = useState(null);
   useEffect(() => {
     socket.on('receive_message', message => {
       console.log(`Message received:`, message);
@@ -16,18 +16,43 @@ const MessageList = ({ socket }) => {
   }, [socket]);
 
   console.log(messageReceived);
-
+  // everytime the person who is talkign changes, add profile to first message
   return (
     <>
       <div className="flex flex-col ">
         {messageReceived.length > 0 &&
-          messageReceived.map((message, index) =>
-            message.sender === socket.id ? (
-              <SentMessage key={index} message={message.message} />
-            ) : (
-              <UserMessage key={index} message={message.message} />
-            )
-          )}
+          messageReceived.map((message, index) => {
+            if (message.sender === socket.id) {
+              const firstMessage = messageReceived.find(
+                message => message.sender === socket.id && message.showProfile
+              );
+              if (firstMessage === undefined) {
+                message.showProfile = true;
+              }
+
+              console.log(firstMessage);
+
+              return (
+                <SentMessage
+                  key={index}
+                  message={message.message}
+                  showProfile={message.showProfile}
+                />
+              );
+            } else {
+              const firstMessage = messageReceived.find(message => message.showProfile);
+              if (firstMessage === undefined) {
+                message.showProfile = true;
+              }
+              return (
+                <ReceivedMessage
+                  key={index}
+                  message={message.message}
+                  showProfile={message.showProfile}
+                />
+              );
+            }
+          })}
       </div>
     </>
   );
