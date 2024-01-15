@@ -78,6 +78,7 @@ io.on('connection', socket => {
         userID: otherParticipant,
         size: roomSize,
       };
+      console.log(roomInfo);
       console.log(io.sockets.adapter.rooms);
       socket.emit('room_info', roomInfo);
       if (roomSize > 1) {

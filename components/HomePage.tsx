@@ -40,17 +40,14 @@ const HomePage = () => {
     setDisconnect('');
     socket.emit('find_room');
   };
-
   return (
     <div>
-      <UserInformation />
-      <div>Room: {room.roomID}</div>
-      <h1>Current User: {socketId}</h1>
-      <h1>Online: {room.size}</h1>
+      <UserInformation roomSize={room.size} otherParticipantId={room.userID} />
+
       <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1>
       <button onClick={handleButtonClick}>Connect to Room</button>
       {socket && <MessageList socket={socket} />}
-      {socket && <ChatBox socket={socket} />}
+      {socket && <ChatBox socket={socket} connectToRoom={handleButtonClick} roomSize={room.size} />}
     </div>
   );
 };
