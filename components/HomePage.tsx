@@ -11,6 +11,7 @@ const HomePage = () => {
   const [disconnect, setDisconnect] = useState('');
   const [isConnected, setIsConnect] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
+  const [room, setRoom] = useState({});
 
   useEffect(() => {
     const socket = getSocket();
@@ -19,13 +20,10 @@ const HomePage = () => {
       setSocket(socket);
     });
 
-    socket.on('room_info', roomInfo => {
-      // setRoom(roomInfo);
-    });
+    socket.emit('find_room');
 
-    socket.on('room_disconnect', message => {
-      setDisconnect(message);
-      setIsConnect(false);
+    socket.on('room_info', roomInfo => {
+      setRoom(roomInfo);
     });
 
     socket.on('chat_connected', participants => {
@@ -33,6 +31,13 @@ const HomePage = () => {
       const userId = participants.filter(participant => participant !== socket.id)[0];
       setIsConnect(true);
       setOtherUserId(userId);
+      setDisconnect('');
+    });
+
+    socket.on('room_disconnect', message => {
+      console.log(message);
+      // setDisconnect(message);
+      setIsConnect(false);
     });
 
     return () => {
@@ -42,15 +47,12 @@ const HomePage = () => {
     };
   }, []);
 
-  const handleButtonClick = () => {
-    setDisconnect('');
-    socket.emit('find_room');
-  };
+  const handleButtonClick = () => {};
 
   return (
     <div>
       <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
-      <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1>
+      {/* <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1> */}
       {socket !== undefined && (
         <>
           <MessageList socket={socket} />

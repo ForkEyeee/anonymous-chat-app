@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Spinner from './ui/spinner';
 
 const UserInformation = ({ otherUserId, isConnected }) => {
+  console.log(otherUserId);
+  console.log(isConnected);
   return (
     <div className="p-[24px] border-b-[1px] ">
       <div className="flex justify-between">

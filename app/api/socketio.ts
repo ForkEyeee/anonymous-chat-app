@@ -3,7 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-// const redisClient = require('../../lib/db.ts');
+const redisClient = require('../../lib/db.ts');
 require('dotenv').config();
 
 const httpServer = http.createServer();
@@ -40,20 +40,21 @@ function findAvailableRoom(rooms, socket) {
   return null;
 }
 
-async function cacheUserId(id) {
-  let userId = await redisClient.get(id);
-  if (userId === null) {
-    console.log('storing userId ' + userId);
-    userId = await redisClient.set(id, id);
+async function cacheUserDetails(id, otherUserId, roomId) {
+  let userDetails = await redisClient.get(id);
+
+  if (userDetails === null) {
+    userDetails = { userId: id, otherUserId: otherUserId, roomId };
+    await redisClient.set(id, JSON.stringify(userDetails));
   } else {
-    console.log('found userId ' + userId);
+    userDetails = JSON.parse(userDetails);
   }
-  return userId;
+
+  return userDetails;
 }
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
-
   socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
 
@@ -69,9 +70,14 @@ io.on('connection', socket => {
       }
       socket.leave(socket.id);
       socket.join(roomID);
+
       const roomSize = io.sockets.adapter.rooms.get(roomID).size;
       const participants = Array.from(io.sockets.adapter.rooms.get(roomID).keys());
       const otherParticipant = participants.find(participant => participant !== socket.id);
+
+      if (roomID !== socket.id) {
+        cacheUserDetails(socket.id, otherParticipant, roomID);
+      }
 
       const roomInfo = {
         roomID,
@@ -81,9 +87,8 @@ io.on('connection', socket => {
 
       console.log(io.sockets.adapter.rooms);
       socket.emit('room_info', roomInfo);
-      io.to(roomID).emit('chat_connected', participants);
       if (roomSize > 1) {
-        io.to(roomID).emit('user_joined', socket.id);
+        io.to(roomID).emit('chat_connected', participants);
       }
     }
   });
@@ -94,10 +99,15 @@ io.on('connection', socket => {
     io.to(room).emit('receive_message', messageData);
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     const disconnectMessage = 'A user disconnected: ' + socket.id;
-    console.log(disconnectMessage);
-    io.to(socket.id).emit('room_disconnect', disconnectMessage);
+    const userDetails = await redisClient.get(socket.id);
+    console.log('userDetails is ' + userDetails);
+    if (userDetails !== undefined && userDetails !== null && userDetails !== '') {
+      const { otherUserId } = JSON.parse(userDetails);
+      io.to(otherUserId).emit('room_disconnect', disconnectMessage);
+    }
+
     console.log(io.sockets.adapter.rooms);
   });
 });
