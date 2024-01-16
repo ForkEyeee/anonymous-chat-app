@@ -1,11 +1,11 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import ReceivedMessage from './ReceivedMessage';
 import SentMessage from './SentMessage';
 
 const MessageList = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState([]);
-  const [messenger, setMessenger] = useState(null);
+
   useEffect(() => {
     socket.on('receive_message', message => {
       console.log(`Message received:`, message);
@@ -15,8 +15,6 @@ const MessageList = ({ socket }) => {
     return () => socket.off('receive_message');
   }, [socket]);
 
-  console.log(messageReceived);
-  // everytime the person who is talkign changes, add profile to first message
   return (
     <>
       <div className="flex flex-col ">

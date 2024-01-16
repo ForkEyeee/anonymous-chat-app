@@ -1,38 +1,44 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { getSocket } from '@/lib/socket';
-
 import ChatBox from './ChatBox';
 import MessageList from './MessageList';
 import UserInformation from './UserInformation';
 
 const HomePage = () => {
-  const [room, setRoom] = useState({});
-  const [socketId, setSocketId] = useState('');
-  const [socket, setSocket] = useState(null);
+  // const [room, setRoom] = useState({});
+  const [socket, setSocket] = useState(undefined);
   const [disconnect, setDisconnect] = useState('');
+  const [isConnected, setIsConnect] = useState(false);
+  const [otherUserId, setOtherUserId] = useState('');
 
   useEffect(() => {
-    const socketInstance = getSocket();
-    setSocket(socketInstance);
+    const socket = getSocket();
 
-    socketInstance.on('connect', () => {
-      console.log(socketInstance.id);
-      setSocketId(socketInstance.id);
+    socket.on('connect', () => {
+      setSocket(socket);
     });
 
-    socketInstance.on('room_info', roomInfo => {
-      setRoom(roomInfo);
+    socket.on('room_info', roomInfo => {
+      // setRoom(roomInfo);
     });
 
-    socketInstance.on('room_disconnect', message => {
-      console.log(message);
+    socket.on('room_disconnect', message => {
       setDisconnect(message);
+      setIsConnect(false);
+    });
+
+    socket.on('chat_connected', participants => {
+      console.log('chat connected');
+      const userId = participants.filter(participant => participant !== socket.id)[0];
+      setIsConnect(true);
+      setOtherUserId(userId);
     });
 
     return () => {
-      socketInstance.off('connect');
-      socketInstance.off('room_info');
+      socket.off('connect');
+      socket.off('room_info');
+      socket.off('chat_connected');
     };
   }, []);
 
@@ -40,14 +46,17 @@ const HomePage = () => {
     setDisconnect('');
     socket.emit('find_room');
   };
+
   return (
     <div>
-      <UserInformation roomSize={room.size} otherParticipantId={room.userID} />
-
+      <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
       <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1>
-      <button onClick={handleButtonClick}>Connect to Room</button>
-      {socket && <MessageList socket={socket} />}
-      {socket && <ChatBox socket={socket} connectToRoom={handleButtonClick} roomSize={room.size} />}
+      {socket !== undefined && (
+        <>
+          <MessageList socket={socket} />
+          <ChatBox socket={socket} connectToRoom={handleButtonClick} isConnected={isConnected} />
+        </>
+      )}
     </div>
   );
 };

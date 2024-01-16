@@ -12,8 +12,7 @@ import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Spinner from './ui/spinner';
 
-const UserInformation = ({ roomSize, otherParticipantId }) => {
-  console.log(otherParticipantId);
+const UserInformation = ({ otherUserId, isConnected }) => {
   return (
     <div className="p-[24px] border-b-[1px] ">
       <div className="flex justify-between">
@@ -29,13 +28,13 @@ const UserInformation = ({ roomSize, otherParticipantId }) => {
             <Avatar>
               <AvatarImage />
               <AvatarFallback>
-                {roomSize === 2 ? otherParticipantId.slice(0, 2) : ''}
+                {isConnected ? otherUserId.slice(0, 2).toUpperCase() : ''}
               </AvatarFallback>
             </Avatar>
           </div>
           <div className="flex-col ">
             <p className="font-metropolis  font-semibold leading-[125%]">
-              {roomSize === 2 ? otherParticipantId : 'Searching for chatters'}
+              {isConnected ? otherUserId : 'Searching for chatters'}
             </p>
             <div className="flex gap-[8px] items-center">
               <svg
@@ -45,10 +44,10 @@ const UserInformation = ({ roomSize, otherParticipantId }) => {
                 viewBox="0 0 10 11"
                 fill="none"
               >
-                <circle cx="5" cy="5.5" r="5" fill={roomSize === 2 ? '#68D391' : '#FF0000'} />
+                <circle cx="5" cy="5.5" r="5" fill={isConnected ? '#68D391' : '#FF0000'} />
               </svg>
               <p className="text-[12px] font-semibold leading-[125%] opacity-[0.6] ">
-                {roomSize === 2 ? 'Connected' : 'Disconnected'}
+                {isConnected ? 'Connected' : 'Disconnected'}
               </p>
             </div>
           </div>

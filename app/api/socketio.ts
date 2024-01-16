@@ -78,9 +78,10 @@ io.on('connection', socket => {
         userID: otherParticipant,
         size: roomSize,
       };
-      console.log(roomInfo);
+
       console.log(io.sockets.adapter.rooms);
       socket.emit('room_info', roomInfo);
+      io.to(roomID).emit('chat_connected', participants);
       if (roomSize > 1) {
         io.to(roomID).emit('user_joined', socket.id);
       }
