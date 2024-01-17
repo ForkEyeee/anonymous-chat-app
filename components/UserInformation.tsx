@@ -30,7 +30,7 @@ const UserInformation = ({ otherUserId, isConnected }) => {
             {isConnected ? (
               <Avatar>
                 <AvatarImage />
-                <AvatarFallback>
+                <AvatarFallback id="avatar">
                   {isConnected ? otherUserId.slice(0, 2).toUpperCase() : ''}
                 </AvatarFallback>
               </Avatar>
@@ -39,8 +39,8 @@ const UserInformation = ({ otherUserId, isConnected }) => {
             )}
           </div>
           <div className="flex-col ">
-            <p className="font-metropolis  font-semibold leading-[125%]">
-              {isConnected ? otherUserId : 'Searching for chatters'}
+            <p className="font-metropolis  font-semibold leading-[125%]" id="user-id">
+              {isConnected ? otherUserId : 'Searching for users'}
             </p>
             <div className="flex gap-[8px] items-center">
               <svg
@@ -52,7 +52,7 @@ const UserInformation = ({ otherUserId, isConnected }) => {
               >
                 <circle cx="5" cy="5.5" r="5" fill={isConnected ? '#68D391' : '#FF0000'} />
               </svg>
-              <p className="text-[12px] font-semibold leading-[125%] opacity-[0.6] ">
+              <p className="text-[12px] font-semibold leading-[125%] opacity-[0.6]" id="status">
                 {isConnected ? 'Connected' : 'Disconnected'}
               </p>
             </div>

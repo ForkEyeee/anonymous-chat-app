@@ -14,7 +14,13 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
-import './commands'
-
+import './commands';
+before(() => {
+  cy.clearCookies();
+  cy.visit('/');
+});
+beforeEach(() => {
+  cy.wait(2000);
+});
 // Alternatively you can use CommonJS syntax:
 // require('./commands')

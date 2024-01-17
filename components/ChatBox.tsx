@@ -23,7 +23,7 @@ const ChatBox = ({ socket, isConnected }) => {
         <FaPaperclip className="attachments-icon" />
         <div className="flex justify-end items-center relative w-[100%]">
           {isConnected && (
-            <button type="submit" className="absolute mr-2 w-10 send-icon">
+            <button type="submit" className="absolute mr-2 w-10 send-icon" id="message-send-btn">
               <IoIosSend />
             </button>
           )}
