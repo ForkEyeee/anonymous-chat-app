@@ -1,5 +1,3 @@
-import { FaPhoneAlt } from 'react-icons/fa';
-import Image from 'next/image';
 import { useTheme } from 'next-themes';
 import {
   DropdownMenu,

@@ -8,7 +8,7 @@ import { Socket } from 'socket.io-client';
 
 const HomePage = () => {
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
-  const [isConnected, setIsConnect] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
 
   useEffect(() => {
@@ -24,20 +24,28 @@ const HomePage = () => {
 
     socket.on('chat_connected', participants => {
       const userId = participants.filter(participant => participant !== socket.id)[0];
-      setIsConnect(true);
+      setIsConnected(true);
       setOtherUserId(userId);
     });
 
     socket.on('room_disconnect', () => {
-      setIsConnect(false);
+      setIsConnected(false);
     });
+
+    const roomSearchInterval = setInterval(() => {
+      if (!isConnected) {
+        console.log('searching');
+        socket.emit('find_room');
+      }
+    }, 3000);
 
     return () => {
       socket.off('connect');
-      socket.off('room_info');
       socket.off('chat_connected');
+      socket.off('room_disconnect');
+      clearInterval(roomSearchInterval);
     };
-  }, []);
+  }, [isConnected]);
 
   return (
     <div>

@@ -27,12 +27,11 @@ async function cacheUserDetails(id, otherUserId, roomId) {
   let userDetails = await redisClient.get(id);
 
   if (userDetails === null) {
-    userDetails = { userId: id, otherUserId: otherUserId, roomId };
-    await redisClient.set(id, JSON.stringify(userDetails));
+    userDetails = { userId: id, otherUserId: otherUserId };
+    await redisClient.set(roomId, JSON.stringify(userDetails));
   } else {
     userDetails = JSON.parse(userDetails);
   }
-
   return userDetails;
 }
 
@@ -41,6 +40,7 @@ io.on('connection', socket => {
 
   socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
+    socket.roomID = socket.rooms.values().next().value;
 
     if (!alreadyInRoom) {
       const rooms = io.sockets.adapter.rooms;
@@ -52,8 +52,10 @@ io.on('connection', socket => {
       } else {
         console.log('Joining an existing room:', roomID);
       }
+
       socket.leave(socket.id);
       socket.join(roomID);
+      socket.roomID = roomID;
 
       const roomSize = io.sockets.adapter.rooms.get(roomID).size;
       const participants = Array.from(io.sockets.adapter.rooms.get(roomID).keys());
@@ -74,12 +76,17 @@ io.on('connection', socket => {
     io.to(room).emit('receive_message', messageData);
   });
 
-  socket.on('disconnect', async () => {
-    const userDetails = await redisClient.get(socket.id);
-    if (userDetails !== undefined && userDetails !== null && userDetails !== '') {
-      const { otherUserId } = JSON.parse(userDetails);
-      io.to(otherUserId).emit('room_disconnect');
-    }
+  socket.on('disconnect', () => {
+    const roomID = socket.roomID;
+    (async () => {
+      try {
+        const userDetails = await redisClient.get(roomID);
+        if (userDetails === null) return;
+        io.to(roomID).emit('room_disconnect');
+      } catch (error) {
+        console.error('Error fetching user details:', error);
+      }
+    })();
   });
 });
 
