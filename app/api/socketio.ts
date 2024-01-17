@@ -13,22 +13,6 @@ const io = new Server(httpServer, {
     transports: ['websocket'],
   },
 });
-console.log(process.env.FRONTEND_URL);
-function generateRandom(maxLimit) {
-  let rand = Math.random() * maxLimit;
-  rand = Math.floor(rand);
-  return rand;
-}
-
-function getRandomItem(rooms) {
-  for (const room of rooms) {
-    if (room.size >= 3) {
-      rooms.delete(room);
-    }
-  }
-  let items = Array.from(rooms);
-  return items[Math.floor(Math.random() * items.length)];
-}
 
 function findAvailableRoom(rooms, socket) {
   for (const [roomID, participants] of rooms) {
@@ -54,6 +38,7 @@ async function cacheUserDetails(id, otherUserId, roomId) {
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
+
   socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
 
@@ -78,14 +63,6 @@ io.on('connection', socket => {
         cacheUserDetails(socket.id, otherParticipant, roomID);
       }
 
-      const roomInfo = {
-        roomID,
-        userID: otherParticipant,
-        size: roomSize,
-      };
-
-      console.log(io.sockets.adapter.rooms);
-      socket.emit('room_info', roomInfo);
       if (roomSize > 1) {
         io.to(roomID).emit('chat_connected', participants);
       }
@@ -94,20 +71,15 @@ io.on('connection', socket => {
 
   socket.on('send_message', messageData => {
     const room = socket.rooms.values().next().value;
-    console.log(room);
     io.to(room).emit('receive_message', messageData);
   });
 
   socket.on('disconnect', async () => {
-    const disconnectMessage = 'A user disconnected: ' + socket.id;
     const userDetails = await redisClient.get(socket.id);
-    console.log('userDetails is ' + userDetails);
     if (userDetails !== undefined && userDetails !== null && userDetails !== '') {
       const { otherUserId } = JSON.parse(userDetails);
-      io.to(otherUserId).emit('room_disconnect', disconnectMessage);
+      io.to(otherUserId).emit('room_disconnect');
     }
-
-    console.log(io.sockets.adapter.rooms);
   });
 });
 

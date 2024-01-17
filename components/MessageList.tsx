@@ -2,14 +2,14 @@
 import { useEffect, useState } from 'react';
 import ReceivedMessage from './ReceivedMessage';
 import SentMessage from './SentMessage';
+import { Message } from '@/lib/definitions';
 
 const MessageList = ({ socket }) => {
-  const [messageReceived, setMessageReceived] = useState([]);
+  const [messageReceived, setMessageReceived] = useState<Message[]>([]);
 
   useEffect(() => {
     if (socket === undefined) return;
-    socket.on('receive_message', message => {
-      console.log(`Message received:`, message);
+    socket.on('receive_message', (message: Message) => {
       setMessageReceived(prevMessages => [...prevMessages, message]);
     });
 

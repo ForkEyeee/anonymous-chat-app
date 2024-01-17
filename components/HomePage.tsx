@@ -4,39 +4,31 @@ import { getSocket } from '@/lib/socket';
 import ChatBox from './ChatBox';
 import MessageList from './MessageList';
 import UserInformation from './UserInformation';
+import { Socket } from 'socket.io-client';
 
 const HomePage = () => {
-  // const [room, setRoom] = useState({});
-  const [socket, setSocket] = useState(undefined);
-  const [disconnect, setDisconnect] = useState('');
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
   const [isConnected, setIsConnect] = useState(false);
   const [otherUserId, setOtherUserId] = useState('');
-  const [room, setRoom] = useState({});
 
   useEffect(() => {
-    const socket = getSocket();
-    if (socket === undefined) return;
+    const socket: Socket | null = getSocket();
+
+    if (socket === undefined || socket === null) return;
+
     socket.on('connect', () => {
       setSocket(socket);
     });
 
     socket.emit('find_room');
 
-    socket.on('room_info', roomInfo => {
-      setRoom(roomInfo);
-    });
-
     socket.on('chat_connected', participants => {
-      console.log('chat connected');
       const userId = participants.filter(participant => participant !== socket.id)[0];
       setIsConnect(true);
       setOtherUserId(userId);
-      setDisconnect('');
     });
 
-    socket.on('room_disconnect', message => {
-      console.log(message);
-      // setDisconnect(message);
+    socket.on('room_disconnect', () => {
       setIsConnect(false);
     });
 
@@ -50,7 +42,6 @@ const HomePage = () => {
   return (
     <div>
       <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
-      {/* <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1> */}
       <MessageList socket={socket} />
       <ChatBox socket={socket} isConnected={isConnected} />
     </div>

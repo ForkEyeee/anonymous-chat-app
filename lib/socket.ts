@@ -1,7 +1,7 @@
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 require('dotenv').config();
 
-let socket = null;
+let socket: Socket<any, any> | null = null;
 
 export const getSocket = () => {
   if (!socket) {

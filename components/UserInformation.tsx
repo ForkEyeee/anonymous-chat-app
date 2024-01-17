@@ -13,20 +13,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Spinner from './ui/spinner';
 
 const UserInformation = ({ otherUserId, isConnected }) => {
-  console.log(otherUserId);
-  console.log(isConnected);
+  const { setTheme } = useTheme();
+
   return (
     <div className="p-[24px] border-b-[1px] ">
       <div className="flex justify-between">
         <div className="flex gap-[16px]">
           <div>
-            {/* <Image
-              alt="avatar"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-xl object-cover object-center"
-              src="https://uortjlczjmucmpaqqhqm.supabase.co/storage/v1/object/public/firejet-converted-images/images/0a16cb0e41db33331f39452bcb2488e5873e3a3e.webp"
-            /> */}
             {isConnected ? (
               <Avatar>
                 <AvatarImage />
@@ -58,8 +51,8 @@ const UserInformation = ({ otherUserId, isConnected }) => {
             </div>
           </div>
         </div>
-        {/* <div className="flex gap-4"> */}
-        {/* <DropdownMenu>
+        <div className="flex gap-4">
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="icon">
                 <SunIcon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -72,13 +65,7 @@ const UserInformation = ({ otherUserId, isConnected }) => {
               <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu> */}
-        <div className="flex pt-[10px] pb-[10px] pl-[16px] pr-[16px] items-center gap-[8px] rounded-[8px] bg-[#615ef01a]">
-          <FaPhoneAlt className="phone-icon" />
-          <p className="text-[#615EF0] font-Metropolis text-[16px] font-semibold leading-[125%]">
-            Call
-          </p>
-          {/* </div> */}
+          </DropdownMenu>
         </div>
       </div>
     </div>
