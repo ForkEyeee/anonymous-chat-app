@@ -7,6 +7,7 @@ const MessageList = ({ socket }) => {
   const [messageReceived, setMessageReceived] = useState([]);
 
   useEffect(() => {
+    if (socket === undefined) return;
     socket.on('receive_message', message => {
       console.log(`Message received:`, message);
       setMessageReceived(prevMessages => [...prevMessages, message]);

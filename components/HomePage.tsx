@@ -15,7 +15,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const socket = getSocket();
-
+    if (socket === undefined) return;
     socket.on('connect', () => {
       setSocket(socket);
     });
@@ -47,18 +47,12 @@ const HomePage = () => {
     };
   }, []);
 
-  const handleButtonClick = () => {};
-
   return (
     <div>
       <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
       {/* <h1 className={`${disconnect !== '' ? '' : 'hidden'}`}>{disconnect}</h1> */}
-      {socket !== undefined && (
-        <>
-          <MessageList socket={socket} />
-          <ChatBox socket={socket} connectToRoom={handleButtonClick} isConnected={isConnected} />
-        </>
-      )}
+      <MessageList socket={socket} />
+      <ChatBox socket={socket} isConnected={isConnected} />
     </div>
   );
 };

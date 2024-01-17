@@ -4,7 +4,7 @@ import { IoIosSend } from 'react-icons/io';
 import { useEffect, useState } from 'react';
 import Spinner from './ui/spinner';
 
-const ChatBox = ({ socket, connectToRoom, isConnected }) => {
+const ChatBox = ({ socket, isConnected }) => {
   const [value, setValue] = useState('');
   const [isHover, setIsHover] = useState(false);
 
@@ -20,7 +20,7 @@ const ChatBox = ({ socket, connectToRoom, isConnected }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex p-[24px] items-center gap-[24px] self-stretch fixed bottom-0 w-[100%]">
-        {isConnected ? <FaPaperclip className="attachments-icon" /> : <Spinner />}
+        <FaPaperclip className="attachments-icon" />
         <div className="flex justify-end items-center relative w-[100%]">
           {isConnected && (
             <button type="submit" className="absolute mr-2 w-10 send-icon">
@@ -32,6 +32,7 @@ const ChatBox = ({ socket, connectToRoom, isConnected }) => {
             className="border border-gray-400 rounded-lg p-4 w-full"
             onChange={e => setValue(e.target.value)}
             value={value}
+            id="chat-input"
           />
         </div>
       </div>

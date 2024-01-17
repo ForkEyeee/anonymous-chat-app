@@ -27,12 +27,16 @@ const UserInformation = ({ otherUserId, isConnected }) => {
               className="h-10 w-10 rounded-xl object-cover object-center"
               src="https://uortjlczjmucmpaqqhqm.supabase.co/storage/v1/object/public/firejet-converted-images/images/0a16cb0e41db33331f39452bcb2488e5873e3a3e.webp"
             /> */}
-            <Avatar>
-              <AvatarImage />
-              <AvatarFallback>
-                {isConnected ? otherUserId.slice(0, 2).toUpperCase() : ''}
-              </AvatarFallback>
-            </Avatar>
+            {isConnected ? (
+              <Avatar>
+                <AvatarImage />
+                <AvatarFallback>
+                  {isConnected ? otherUserId.slice(0, 2).toUpperCase() : ''}
+                </AvatarFallback>
+              </Avatar>
+            ) : (
+              <Spinner />
+            )}
           </div>
           <div className="flex-col ">
             <p className="font-metropolis  font-semibold leading-[125%]">
