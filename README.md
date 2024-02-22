@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+---
 
-## Getting Started
+# Anonymous Chat App
 
-First, run the development server:
+## Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Real-time anonymous chat application built with Next.js & Socket.IO, featuring real-time messaging without user registration.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Before you begin, ensure you have the following installed:
+- Node.js (LTS version)
+- npm or yarn
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Installation
 
-## Learn More
+1. **Clone the repository**
 
-To learn more about Next.js, take a look at the following resources:
+   Use Git to clone the project to your local machine:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   git clone https://github.com/jbrown58/anonymous-chat-app
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+2. **Install dependencies**
+
+   Navigate to the project directory and install the necessary dependencies:
+
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Environment Setup**
+
+   Create a `.env` file in the root of your project and fill it with the necessary environment variables:
+
+   ```plaintext
+   REDIS_PW=""
+   REDIS_HOST=""
+   REDIS_PORT=""
+   SOCKET_SERVER=""
+   FRONTEND_URL=""
+   NEXTAUTH_SECRET=""
+   NEXTAUTH_URL=""
+   ```
+
+   Replace the placeholders with your actual configuration values. These include Redis credentials, Socket.IO server URL, frontend URL, and NextAuth configuration.
+
+4. **Run the development server**
+
+   Start the local development server:
+
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
+
+5. **Edit and Preview**
+
+   You can start editing the page by modifying `app/`. The pages auto-update as you edit the files.
+
+6. **Testing (Optional)**
+
+   Run the tests using Cypress:
+
+   ```bash
+   npx cypress open
+   # or
+   yarn cypress:open
+   ```
+
+## Dependencies
+
+- [Next.js](https://nextjs.org/)
+- [Socket.IO](https://socket.io/)
+- [Express](https://expressjs.com/)
+- [Redis](https://redis.io/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Cypress](https://www.cypress.io/)
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Deploy your Next.js app easily using the [Vercel Platform](https://vercel.com/new). Refer to the [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+---
