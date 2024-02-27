@@ -5,7 +5,7 @@ let socket: Socket<any, any> | null = null;
 
 export const getSocket = () => {
   if (!socket) {
-    const url = 'http://localhost:3001';
+    const url = 'https://anonymous-chat-app-ga0r.onrender.com';
     console.log(`Initializing socket connection to: ${url}`);
     socket = io(url);
   }
