@@ -2,10 +2,30 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const { v4: uuidv4 } = require('uuid');
-const redisClient = require('../../lib/db.ts');
 require('dotenv').config();
+const { createClient } = require('redis');
 
 const httpServer = http.createServer();
+
+const redisClient = createClient({
+  username: process.env.REDIS_USER,
+  password: process.env.REDIS_PW,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+    tls: true, 
+  },
+});
+
+redisClient.on('error', err => console.log(err));
+
+if (!redisClient.isOpen) {
+  redisClient.connect();
+  console.log(process.env.REDIS_HOST);
+  console.log(process.env.NODE_ENV);
+  console.log('connected to redis');
+}
+
 const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:3000',
@@ -13,6 +33,7 @@ const io = new Server(httpServer, {
     transports: ['websocket'],
   },
 });
+
 
 function findAvailableRoom(rooms, socket) {
   for (const [roomID, participants] of rooms) {
@@ -87,7 +108,6 @@ io.on('connection', socket => {
 
   socket.on('disconnect', () => { 
       const roomID = socket.roomID;
-      console.log("user disconnected!!!");
       (async () => {
         try {
           const userDetails = await redisClient.get(roomID);
