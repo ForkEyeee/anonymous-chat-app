@@ -18,7 +18,7 @@ const MessageList = ({ socket }) => {
 
   return (
     <>
-      <div className="flex flex-col" id="message-list">
+      <div className="flex flex-col m-[20px]" id="message-list">
         {messageReceived.length > 0 &&
           messageReceived.map((message, index) => {
             if (message.sender === socket.id) {

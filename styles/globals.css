@@ -74,6 +74,10 @@
   overflow-wrap: anywhere;
 }
 
+#input-container {
+  background-color: hsl(var(--background));;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
