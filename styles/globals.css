@@ -64,6 +64,16 @@
   background: #f1f1f1;
 }
 
+@media (min-width: 320px) and (max-width: 479px) {
+ #user-id{
+  font-size: small;
+ }
+}
+
+#user-id {
+  overflow-wrap: anywhere;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
