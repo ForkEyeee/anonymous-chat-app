@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 require('dotenv').config();
 const { createClient } = require('redis');
 
+//start redis instance
 const httpServer = http.createServer();
 
 const redisClient = createClient({
@@ -21,11 +22,10 @@ redisClient.on('error', err => console.log(err));
 
 if (!redisClient.isOpen) {
   redisClient.connect();
-  console.log(process.env.REDIS_HOST);
-  console.log(process.env.NODE_ENV);
   console.log('connected to redis');
 }
 
+//start socket instance
 const io = new Server(httpServer, {
   cors: {
     origin: 'http://localhost:3000',
