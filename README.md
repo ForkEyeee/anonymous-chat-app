@@ -37,6 +37,7 @@ Before you begin, ensure you have the following installed:
    Create a `.env` file in the root of your project and fill it with the necessary environment variables:
 
    ```plaintext
+   REDIS_USER=""
    REDIS_PW=""
    REDIS_HOST=""
    REDIS_PORT=""
