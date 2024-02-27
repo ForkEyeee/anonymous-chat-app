@@ -8,7 +8,7 @@ require('dotenv').config();
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'https://anonymous-chat-w5rzlzzvc-forks-projects.vercel.app/',
     methods: ['GET', 'POST'],
     transports: ['websocket'],
   },
