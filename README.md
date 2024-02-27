@@ -40,10 +40,6 @@ Before you begin, ensure you have the following installed:
    REDIS_PW=""
    REDIS_HOST=""
    REDIS_PORT=""
-   SOCKET_SERVER=""
-   FRONTEND_URL=""
-   NEXTAUTH_SECRET=""
-   NEXTAUTH_URL=""
    ```
 
    Replace the placeholders with your actual configuration values. These include Redis credentials, Socket.IO server URL, frontend URL, and NextAuth configuration.
@@ -78,7 +74,6 @@ Before you begin, ensure you have the following installed:
 
 - [Next.js](https://nextjs.org/)
 - [Socket.IO](https://socket.io/)
-- [Express](https://expressjs.com/)
 - [Redis](https://redis.io/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [Cypress](https://www.cypress.io/)

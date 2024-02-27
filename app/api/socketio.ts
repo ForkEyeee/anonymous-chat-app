@@ -85,8 +85,9 @@ io.on('connection', socket => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', () => { 
       const roomID = socket.roomID;
+      console.log("user disconnected!!!");
       (async () => {
         try {
           const userDetails = await redisClient.get(roomID);
