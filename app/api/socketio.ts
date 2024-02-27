@@ -8,7 +8,7 @@ require('dotenv').config();
 const httpServer = http.createServer();
 const io = new Server(httpServer, {
   cors: {
-    origin: 'https://anonymous-chat-w5rzlzzvc-forks-projects.vercel.app/',
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
     transports: ['websocket'],
   },
@@ -37,6 +37,7 @@ async function cacheUserDetails(id, otherUserId, roomId) {
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
+  console.log("test");
 
   socket.on('find_room', () => {
     const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
