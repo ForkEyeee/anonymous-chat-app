@@ -37,11 +37,11 @@ async function cacheUserDetails(id, otherUserId, roomId) {
 
 io.on('connection', socket => {
   console.log(`User Connected: ${socket.id}`);
-  console.log("test");
 
   socket.on('find_room', () => {
-    const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
-    socket.roomID = socket.rooms.values().next().value;
+  try {
+      const alreadyInRoom = Array.from(socket.rooms).some(room => room !== socket.id);
+      socket.roomID = socket.rooms.values().next().value;
 
     if (!alreadyInRoom) {
       const rooms = io.sockets.adapter.rooms;
@@ -70,28 +70,40 @@ io.on('connection', socket => {
         io.to(roomID).emit('chat_connected', participants);
       }
     }
+    } catch (error) {
+      console.error(error)
+}
+    
   });
 
   socket.on('send_message', messageData => {
-    const room = socket.rooms.values().next().value;
-    io.to(room).emit('receive_message', messageData);
+    try {
+      const room = socket.rooms.values().next().value;
+      io.to(room).emit('receive_message', messageData);
+    } catch (error) {
+      console.error(error)
+    }
   });
 
   socket.on('disconnect', () => {
-    const roomID = socket.roomID;
-    (async () => {
-      try {
-        const userDetails = await redisClient.get(roomID);
-        if (userDetails === null) return;
-        io.to(roomID).emit('room_disconnect');
-      } catch (error) {
-        console.error('Error fetching user details:', error);
-      }
-    })();
+      const roomID = socket.roomID;
+      (async () => {
+        try {
+          const userDetails = await redisClient.get(roomID);
+          if (userDetails === null) return;
+          io.to(roomID).emit('room_disconnect');
+        } catch (error) {
+          console.error('Error fetching user details:', error);
+        }
+      })();
   });
 });
 
 const PORT = process.env.PORT || 3001;
 httpServer.listen(PORT, () => {
-  console.log(`Socket.io server is running on port ${PORT}`);
+  try {
+    console.log(`Socket.io server is running on port ${PORT}`);
+  } catch (error) {
+    console.error(error)
+  }
 });
