@@ -1,10 +1,11 @@
-import { FaPaperclip } from 'react-icons/fa6';
 import { Input } from '@/components/ui/input';
 import { IoIosSend } from 'react-icons/io';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { ConnectionContext } from './ConnectionContext';
 
-const ChatBox = ({ socket, isConnected }) => {
+const ChatBox = ({ socket }) => {
   const [value, setValue] = useState('');
+  const isConnected  = useContext(ConnectionContext)
 
   const handleSubmit = e => {
     e.preventDefault();

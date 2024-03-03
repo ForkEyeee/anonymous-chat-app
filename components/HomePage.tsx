@@ -5,6 +5,7 @@ import ChatBox from './ChatBox';
 import MessageList from './MessageList';
 import UserInformation from './UserInformation';
 import { Socket } from 'socket.io-client';
+import { ConnectionContext } from './ConnectionContext';
 
 const HomePage = () => {
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
@@ -35,7 +36,6 @@ const HomePage = () => {
 
     const roomSearchInterval = setInterval(() => {
       if (!isConnected) {
-        console.log('searching');
         socket.emit('find_room');
       }
     }, 3000);
@@ -50,9 +50,11 @@ const HomePage = () => {
 
   return (
     <div>
-      <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
-      <MessageList socket={socket} isConnected={isConnected}  />
-      <ChatBox socket={socket} isConnected={isConnected} />
+      <ConnectionContext.Provider value={isConnected}>
+        <UserInformation otherUserId={otherUserId}/>
+        <MessageList socket={socket}/>
+        <ChatBox socket={socket}/>
+      </ConnectionContext.Provider>
     </div>
   );
 };

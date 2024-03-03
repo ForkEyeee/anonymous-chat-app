@@ -8,10 +8,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useContext } from 'react';
+import { ConnectionContext } from './ConnectionContext';
 import Spinner from './ui/spinner';
 
-const UserInformation = ({ otherUserId, isConnected }) => {
+const UserInformation = ({ otherUserId }) => {
   const { setTheme } = useTheme();
+  const isConnected = useContext(ConnectionContext)
 
   return (
     <div className="p-[24px] border-b-[1px] ">

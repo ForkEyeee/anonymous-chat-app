@@ -1,12 +1,14 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ReceivedMessage from './ReceivedMessage';
 import SentMessage from './SentMessage';
 import { Message } from '@/lib/definitions';
+import { ConnectionContext } from './ConnectionContext';
 
-const MessageList = ({ socket, isConnected}) => {
+const MessageList = ({ socket}) => {
   const [messageReceived, setMessageReceived] = useState<Message[]>([]);
-
+  const isConnected  = useContext(ConnectionContext)
+  
   useEffect(() => {
     if (socket === undefined) return;
     socket.on('receive_message', (message: Message) => {
