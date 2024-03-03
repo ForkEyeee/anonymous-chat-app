@@ -4,7 +4,7 @@ import ReceivedMessage from './ReceivedMessage';
 import SentMessage from './SentMessage';
 import { Message } from '@/lib/definitions';
 
-const MessageList = ({ socket }) => {
+const MessageList = ({ socket, isConnected}) => {
   const [messageReceived, setMessageReceived] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -15,6 +15,10 @@ const MessageList = ({ socket }) => {
 
     return () => socket.off('receive_message');
   }, [socket]);
+
+  useEffect(() => {
+    setMessageReceived([])
+  },[isConnected])
 
   return (
     <>

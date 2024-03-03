@@ -29,6 +29,7 @@ const HomePage = () => {
     });
 
     socket.on('room_disconnect', () => {
+      console.log('disconnected')
       setIsConnected(false);
     });
 
@@ -50,7 +51,7 @@ const HomePage = () => {
   return (
     <div>
       <UserInformation otherUserId={otherUserId} isConnected={isConnected} />
-      <MessageList socket={socket} />
+      <MessageList socket={socket} isConnected={isConnected}  />
       <ChatBox socket={socket} isConnected={isConnected} />
     </div>
   );
